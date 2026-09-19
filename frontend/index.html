@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMesh — Autonomous Environmental Multi-Agent Intelligence</title>
+    <!-- Modern Typography & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <!-- Lucide Icons & Chart.js -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-light">
+    <!-- Top Progress Flow Line -->
+    <div id="global-progress-bar" class="progress-bar-line"></div>
+    
+    <!-- ====================================================================
+         NAVBAR 1: GLOBAL BRAND, SEARCH & SYSTEM ACTIONS (TIER 1)
+         ==================================================================== -->
+    <header class="app-header-tier1">
+        <div class="header-inner">
+            <!-- Brand Identity -->
+            <a href="#dashboard" class="brand" style="text-decoration: none;">
+                <div class="brand-symbol">
+                    <i data-lucide="shield-check" class="icon-md"></i>
+                </div>
+                <div class="brand-text">
+                    <div class="brand-title-wrap">
+                        <span class="brand-name">EcoMesh</span>
+                        <span class="badge-tag">v2.5 Enterprise</span>
+                    </div>
+                    <span class="brand-desc">Autonomous Multi-Agent Environmental Decision Platform</span>
+                </div>
+            </a>
+
+            <!-- Full-Width Global City Search Bar -->
+            <div class="header-search-wrap">
+                <div class="search-box-wrap">
+                    <i data-lucide="search" class="search-icon icon-sm"></i>
+                    <input type="text" id="global-search-input" placeholder="Search any city or monitoring station worldwide (e.g. Tokyo, London, Paris, New York, Delhi)..." autocomplete="off">
+                    <button id="btn-search-trigger" class="search-action-btn" title="Search Telemetry">
+                        <i data-lucide="arrow-right" class="icon-xs"></i>
+                    </button>
+                    <span id="search-spinner" class="search-spinner-icon" style="display: none;">
+                        <i data-lucide="loader-2" class="icon-sm spin"></i>
+                    </span>
+                    <div class="search-dropdown" id="search-dropdown" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- System Status & Action Controls -->
+            <div class="header-actions-wrap">
+                <div class="system-status-pill">
+                    <span class="status-pulse-dot"></span>
+                    <span>5 Specialists Online</span>
+                </div>
+
+                <button class="btn-voice-briefing" id="btn-play-voice-briefing" title="Listen to Tactical AI Voice Briefing">
+                    <i data-lucide="volume-2" class="icon-xs" id="voice-icon"></i>
+                    <span id="voice-btn-text">Voice Briefing</span>
+                    <span class="audio-waves" id="audio-wave-anim" style="display: none;">
+                        <span></span><span></span><span></span>
+                    </span>
+                </button>
+
+                <button class="btn-header-alert" id="btn-open-alert-modal" title="Emergency Broadcast">
+                    <i data-lucide="radio" class="icon-xs"></i>
+                    <span>Alert Blast</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================================
+         NAVBAR 2: PRIMARY WORKSPACE MODULE TABS (TIER 2)
+         ==================================================================== -->
+    <nav class="app-nav-tier2">
+        <div class="nav-tier2-inner">
+            <div class="enterprise-nav-tabs">
+                <a href="#dashboard" class="nav-tab active" data-page="page-dashboard">
+                    <i data-lucide="layout-dashboard" class="icon-xs"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#warroom" class="nav-tab" data-page="page-warroom">
+                    <i data-lucide="messages-square" class="icon-xs"></i>
+                    <span>War Room Debate</span>
+                </a>
+                <a href="#gis" class="nav-tab" data-page="page-gis">
+                    <i data-lucide="map" class="icon-xs"></i>
+                    <span>GIS & Plumes</span>
+                </a>
+                <a href="#sandbox" class="nav-tab" data-page="page-sandbox">
+                    <i data-lucide="sliders" class="icon-xs"></i>
+                    <span>Policy Sandbox</span>
+                </a>
+                <a href="#vision" class="nav-tab" data-page="page-vision">
+                    <i data-lucide="camera" class="icon-xs"></i>
+                    <span>Vision AI Lab</span>
+                </a>
+                <a href="#civic" class="nav-tab" data-page="page-civic">
+                    <i data-lucide="users" class="icon-xs"></i>
+                    <span>Citizen & Civic Hub</span>
+                </a>
+                <a href="#architecture" class="nav-tab" data-page="page-architecture">
+                    <i data-lucide="git-commit" class="icon-xs"></i>
+                    <span>Architecture</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ====================================================================
+         NAVBAR 3: STRATEGIC HUBS & CONSENSUS TELEMETRY BAR (TIER 3)
+         ==================================================================== -->
+    <div class="app-strip-tier3">
+        <div class="strip-tier3-inner">
+            <div class="hub-selector-group">
+                <div class="hub-title-tag">
+                    <i data-lucide="globe" class="icon-xs"></i>
+                    <span>Strategic Hubs:</span>
+                </div>
+                <div class="hub-chips">
+                    <button class="hub-btn active" data-city="Delhi NCR">Delhi NCR</button>
+                    <button class="hub-btn" data-city="Mumbai">Mumbai</button>
+                    <button class="hub-btn" data-city="London">London</button>
+                    <button class="hub-btn" data-city="Tokyo">Tokyo</button>
+                    <button class="hub-btn" data-city="New York">New York</button>
+                    <button class="hub-btn" data-city="Bengaluru">Bengaluru</button>
+                </div>
+            </div>
+
+            <div class="telemetry-sync-badge">
+                <span class="live-dot-beacon"></span>
+                <span>Autonomous Consensus Engine: <strong>Multi-Agent Neural Core</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN MULTI-PAGE APPLICATION CONTAINER -->
+    <main class="main-shell">
+        
+        <!-- ====================================================================
+             PAGE 1: EXECUTIVE COMMAND DASHBOARD
+             ==================================================================== -->
+        <div class="app-page active" id="page-dashboard">
+            <!-- Unified Executive Risk Command Hub -->
+            <section class="executive-command-hub surface-card">
+                <!-- Left Panel: Composite Threat Gauge & Dynamic Allocation -->
+                <div class="hub-threat-panel">
+                    <div class="card-header-clean">
+                        <span class="card-eyebrow">COMPOSITE THREAT MATRIX</span>
+                        <span class="risk-level-badge" id="risk-badge">LEVEL 2 • MODERATE</span>
+                    </div>
+
+                    <div class="gauge-centerpiece">
+                        <div class="circular-meter">
+                            <svg class="meter-svg" viewBox="0 0 160 160">
+                                <defs>
+                                    <linearGradient id="meterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#1B4EF5"/>
+                                        <stop offset="60%" stop-color="#3874FF"/>
+                                        <stop offset="100%" stop-color="#F4CEFF"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle class="meter-bg" cx="80" cy="80" r="68"></circle>
+                                <circle class="meter-progress" id="meter-progress" cx="80" cy="80" r="68" stroke="url(#meterGradient)"></circle>
+                            </svg>
+                            <div class="meter-content">
+                                <span class="meter-val" id="composite-score-val">1.80</span>
+                                <span class="meter-sub">out of 4.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="gauge-footer-meta">
+                        <div class="meta-item">
+                            <span class="meta-lbl">Target Hub</span>
+                            <strong class="meta-val" id="target-city-val">Delhi NCR</strong>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-lbl">Consensus Conf.</span>
+                            <strong class="meta-val" id="confidence-val">90%</strong>
+                        </div>
+                    </div>
+
+                    <!-- Live 5-Stream Weight Allocation Bar -->
+                    <div class="integrated-sensor-distribution">
+                        <div class="dist-header">
+                            <span class="dist-title">Stream Weights</span>
+                            <span class="dist-meta" id="weight-breakdown-val">35% / 25% / 15% / 15% / 10%</span>
+                        </div>
+                        <div class="stacked-distribution-bar">
+                            <div class="dist-seg seg-air" id="w-air-bar" style="width: 35%;" title="Atmospheric Air"></div>
+                            <div class="dist-seg seg-water" id="w-water-bar" style="width: 25%;" title="Hydrological Water"></div>
+                            <div class="dist-seg seg-waste" id="w-waste-bar" style="width: 15%;" title="Optical Waste Vision"></div>
+                            <div class="dist-seg seg-health" id="w-health-bar" style="width: 15%;" title="Epidemiological Health"></div>
+                            <div class="dist-seg seg-policy" id="w-policy-bar" style="width: 10%;" title="Municipal Policy"></div>
+                        </div>
+                        <div class="dist-legend">
+                            <span class="legend-item"><span class="dot dot-air"></span> Air <strong id="w-air-pct">35%</strong></span>
+                            <span class="legend-item"><span class="dot dot-water"></span> Water <strong id="w-water-pct">25%</strong></span>
+                            <span class="legend-item"><span class="dot dot-waste"></span> Waste <strong id="w-waste-pct">15%</strong></span>
+                            <span class="legend-item"><span class="dot dot-health"></span> Health <strong id="w-health-pct">15%</strong></span>
+                            <span class="legend-item"><span class="dot dot-policy"></span> Policy <strong id="w-policy-pct">10%</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel: AI Executive Synthesis & Primary Directive -->
+                <div class="hub-action-panel">
+                    <div class="card-header-clean">
+                        <div class="hub-title-line">
+                            <span class="card-eyebrow">EXECUTIVE ENVIRONMENTAL SYNTHESIS</span>
+                            <span class="subtle-chip" id="model-tag"><i data-lucide="sparkles" class="icon-xs"></i> Multi-Agent Autonomous Synthesis</span>
+                        </div>
+                    </div>
+
+                    <div class="narrative-content" id="narrative-body">
+                        Evaluating environmental telemetry across atmospheric, aquatic, optical vision, and epidemiological sensors...
+                    </div>
+
+                    <!-- Divergence Pill -->
+                    <div id="conflict-banner" class="diagnostic-divergence-pill" style="display: none;">
+                        <i data-lucide="alert-triangle" class="icon-xs"></i>
+                        <div class="div-text-wrap">
+                            <strong>Telemetry Divergence:</strong>
+                            <span id="conflict-msg"></span>
+                        </div>
+                    </div>
+
+                    <!-- Primary Operational Directive Box -->
+                    <div class="primary-directive-box">
+                        <div class="directive-icon-circle">
+                            <i data-lucide="shield-alert" class="icon-md"></i>
+                        </div>
+                        <div class="directive-text-wrap">
+                            <span class="directive-eyebrow">PRIMARY EXECUTIVE DIRECTIVE</span>
+                            <p class="directive-statement" id="directive-statement">Awaiting multi-agent consensus...</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Links -->
+                    <div class="hub-quick-actions">
+                        <a href="#warroom" class="btn-action-outline">
+                            <i data-lucide="messages-square" class="icon-xs"></i> War Room Chamber
+                        </a>
+                        <a href="#sandbox" class="btn-action-outline">
+                            <i data-lucide="sliders" class="icon-xs"></i> Policy Sandbox
+                        </a>
+                        <button class="btn-action-outline" id="btn-export-briefing">
+                            <i data-lucide="download" class="icon-xs"></i> Export Report (JSON)
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5-Specialist Sensory Telemetry Deck -->
+            <div class="section-title-wrap">
+                <h2 class="section-heading">Specialist Telemetry Deck</h2>
+                <span class="section-subheading">Independent sensory nodes streaming atmospheric, aquatic, optical, clinical, and policy signals</span>
+            </div>
+
+            <section class="telemetry-deck-grid">
+                <!-- 1. Air Specialist -->
+                <div class="telemetry-card">
+                    <div class="t-card-top">
+                        <div class="t-icon icon-air"><i data-lucide="wind" class="icon-sm"></i></div>
+                        <span class="status-chip" id="air-status-chip">ONLINE</span>
+                    </div>
+                    <div class="t-card-label">Atmospheric Air</div>
+                    <div class="t-card-metric">
+                        <span class="t-number" id="air-val-num">--</span>
+                        <span class="t-unit">AQI</span>
+                        <span class="t-tag" id="air-cat-tag">Moderate</span>
+                    </div>
+                    <p class="t-summary" id="air-summary-content">Loading pollutants...</p>
+                    <div class="t-mini-tags" id="pollutants-pill-wrap"></div>
+                </div>
+
+                <!-- 2. Water Specialist -->
+                <div class="telemetry-card">
+                    <div class="t-card-top">
+                        <div class="t-icon icon-water"><i data-lucide="droplets" class="icon-sm"></i></div>
+                        <span class="status-chip" id="water-status-chip">ONLINE</span>
+                    </div>
+                    <div class="t-card-label">Hydrological Catchment</div>
+                    <div class="t-card-metric">
+                        <span class="t-number" id="water-val-num">--</span>
+                        <span class="t-unit">WQI</span>
+                        <span class="t-tag" id="water-cat-tag">Satisfactory</span>
+                    </div>
+                    <p class="t-summary" id="water-summary-content">Evaluating water basin...</p>
+                    <div class="t-mini-tags">
+                        <span class="t-pill">pH <strong id="val-ph">7.2</strong></span>
+                        <span class="t-pill">DO <strong id="val-do">6.5</strong></span>
+                        <span class="t-pill">Turb <strong id="val-turb">4.0</strong></span>
+                    </div>
+                </div>
+
+                <!-- 3. Waste Specialist -->
+                <div class="telemetry-card">
+                    <div class="t-card-top">
+                        <div class="t-icon icon-waste"><i data-lucide="scan" class="icon-sm"></i></div>
+                        <span class="status-chip" id="waste-status-chip">ONLINE</span>
+                    </div>
+                    <div class="t-card-label">Waste Vision (YOLOv8)</div>
+                    <div class="t-card-metric">
+                        <span class="t-number" id="waste-val-num">--</span>
+                        <span class="t-unit">Items</span>
+                        <span class="t-tag" id="waste-cat-tag">Normal</span>
+                    </div>
+                    <p class="t-summary" id="waste-summary-content">Scanning optical feed...</p>
+                    <div class="t-mini-tags">
+                        <span class="t-pill">Neural <strong id="waste-neural-tag">YOLOv8n</strong></span>
+                        <span class="t-pill">Stream <strong>Live</strong></span>
+                    </div>
+                </div>
+
+                <!-- 4. Health Specialist -->
+                <div class="telemetry-card">
+                    <div class="t-card-top">
+                        <div class="t-icon icon-health"><i data-lucide="heart-pulse" class="icon-sm"></i></div>
+                        <span class="status-chip" id="health-status-chip">ONLINE</span>
+                    </div>
+                    <div class="t-card-label">Epidemiological Health</div>
+                    <div class="t-card-metric">
+                        <span class="t-number" id="health-val-num">--</span>
+                        <span class="t-unit">Index</span>
+                        <span class="t-tag" id="health-cat-tag">Low</span>
+                    </div>
+                    <p class="t-summary" id="health-summary-content">Modeling clinical load...</p>
+                    <div class="t-mini-tags">
+                        <span class="t-pill">Surge <strong id="val-health-surge">14%</strong></span>
+                        <span class="t-pill">Exposed <strong id="val-health-exposed">12k</strong></span>
+                    </div>
+                </div>
+
+                <!-- 5. Policy Specialist -->
+                <div class="telemetry-card">
+                    <div class="t-card-top">
+                        <div class="t-icon icon-policy"><i data-lucide="building-2" class="icon-sm"></i></div>
+                        <span class="status-chip" id="policy-status-chip">ONLINE</span>
+                    </div>
+                    <div class="t-card-label">Municipal Readiness</div>
+                    <div class="t-card-metric">
+                        <span class="t-number" id="policy-val-num">88</span>
+                        <span class="t-unit">%</span>
+                        <span class="t-tag" id="policy-cat-tag">Stage-II</span>
+                    </div>
+                    <p class="t-summary" id="policy-summary-content">Statutory mitigation readiness...</p>
+                    <div class="t-mini-tags">
+                        <span class="t-pill">Trigger <strong id="val-policy-stage">STAGE-II</strong></span>
+                        <span class="t-pill">Cost <strong id="val-policy-cost">$1.1M</strong></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 24h Diurnal Telemetry Forecast -->
+            <div class="surface-card trends-card" style="margin-bottom: 2rem;">
+                <div class="card-header-clean">
+                    <div class="trends-header-wrap">
+                        <span class="card-eyebrow">24-HOUR TELEMETRY FORECAST & CYCLES</span>
+                        <h3 class="ws-card-title" id="trends-chart-title">Diurnal Telemetry Variation</h3>
+                    </div>
+                    <div class="chart-legend-chips">
+                        <span class="chart-chip chip-aqi"><span class="dot-color aqi-dot"></span> Air AQI</span>
+                        <span class="chart-chip chip-wqi"><span class="dot-color wqi-dot"></span> Water WQI</span>
+                        <span class="chart-chip chip-waste"><span class="dot-color waste-dot"></span> Debris Index</span>
+                    </div>
+                </div>
+                <div class="chart-canvas-container">
+                    <canvas id="telemetryTrendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================================================================
+             PAGE 2: MULTI-AGENT WAR ROOM & CONSENSUS CHAMBER
+             ==================================================================== -->
+        <div class="app-page" id="page-warroom">
+            <div class="section-title-wrap">
+                <h2 class="section-heading">Multi-Agent War Room & Consensus Chamber</h2>
+                <span class="section-subheading">Real-time autonomous negotiation, cross-vector argumentation, and specialist voting matrix</span>
+            </div>
+
+            <div class="warroom-grid">
+                <!-- Live Agent Debate Feed -->
+                <div class="surface-card warroom-chat-card">
+                    <div class="card-header-clean">
+                        <span class="card-eyebrow">AUTONOMOUS NEGOTIATION STREAM</span>
+                        <span class="subtle-chip"><i data-lucide="cpu" class="icon-xs"></i> Active StateGraph Loop</span>
+                    </div>
+                    <div class="debate-messages-feed" id="debate-feed-container"></div>
+                </div>
+
+                <!-- Specialist Voting Matrix Table -->
+                <div class="surface-card warroom-votes-card">
+                    <div class="card-header-clean">
+                        <span class="card-eyebrow">SPECIALIST VOTING MATRIX & WEIGHTS</span>
+                    </div>
+                    <div class="voting-table-wrap" id="voting-matrix-table"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================================================================
+             PAGE 3: 3D GIS STATION NETWORK & PLUME DISPERSION
+             ==================================================================== -->
+        <div class="app-page" id="page-gis">
+            <div class="section-title-wrap">
+                <h2 class="section-heading">Geospatial Telemetry & Plume Dispersion</h2>
+                <span class="section-subheading">Interactive spatial network with downwind atmospheric pollution isochrones & live stations</span>
+            </div>
+
+            <div class="surface-card map-card">
+                <div class="card-header-clean">
+                    <div>
+                        <span class="card-eyebrow">SPATIAL TELEMETRY NETWORK</span>
+                        <h3 class="ws-card-title" id="map-location-label">Global Station Spatial Network</h3>
+                    </div>
+                    <div class="map-controls-chip-row">
+                        <span class="subtle-chip"><i data-lucide="navigation" class="icon-xs"></i> Atmospheric Plume Dispersion Active</span>
+                    </div>
+                </div>
+                <div id="gis-map-container" style="height: 580px;"></div>
+            </div>
+        </div>
+
+        <!-- ====================================================================
+             PAGE 4: WHAT-IF POLICY SANDBOX & 2030 CLIMATE ROI
+             ==================================================================== -->
+        <div class="app-page" id="page-sandbox">
+            <div class="section-title-wrap">
+                <h2 class="section-heading">What-If Policy Sandboxing Studio</h2>
+                <span class="section-subheading">Simulate municipal climate interventions, compute health ROI ($M), and project 30-day air recovery</span>
+            </div>
+
+            <div class="surface-card policy-sandbox-card">
+                <div class="policy-sandbox-grid">
+                    <!-- Sliders & Toggles Panel -->
+                    <div class="policy-controls-panel">
+                        <div class="sim-control-box">
+                            <div class="sim-label-line">
+                                <label for="policy-ev-slider">Electric Vehicle Fleet Mandate:</label>
+                                <strong id="policy-ev-val">0%</strong>
+                            </div>
+                            <input type="range" id="policy-ev-slider" min="0" max="100" step="5" value="0" class="sim-slider">
+                            <span class="sim-hint">Simulate transition to zero-emission public and private transit.</span>
+                        </div>
+
+                        <div class="sim-control-box">
+                            <div class="sim-label-line">
+                                <label for="policy-scrubbers-slider">Deploy Industrial Smog Scrubbers:</label>
+                                <strong id="policy-scrubbers-val">0 Towers</strong>
+                            </div>
+                            <input type="range" id="policy-scrubbers-slider" min="0" max="50" step="5" value="0" class="sim-slider">
+                            <span class="sim-hint">Simulate high-capacity electrostatic filtration towers.</span>
+                        </div>
+
+                        <div class="sim-control-box">
+                            <div class="sim-toggle-row">
+                                <label class="custom-toggle">
+                                    <input type="checkbox" id="policy-effluent-ban">
+                                    <span class="toggle-track"></span>
+                                    <span class="toggle-text">Strict River Effluent Ban (+18 WQI)</span>
+                                </label>
+                                <label class="custom-toggle">
+                                    <input type="checkbox" id="policy-drone-sweepers">
+                                    <span class="toggle-track"></span>
+                                    <span class="toggle-text">Autonomous Drone Waste Sweepers (-65% Debris)</span>
+                                </label>
+                                <label class="custom-toggle">
+                                    <input type="checkbox" id="policy-diesel-ban">
+                                    <span class="toggle-track"></span>
+                                    <span class="toggle-text">Heavy Diesel Transport Ban (-16% PM2.5)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button class="btn-solid" id="btn-run-policy-sim">
+                            <i data-lucide="play" class="icon-xs"></i> Calculate Policy Intervention Impact
+                        </button>
+                    </div>
+
+                    <!-- Policy Simulation Results & ROI Metrics -->
+                    <div class="policy-results-panel">
+                        <div class="policy-roi-kpis">
+                            <div class="roi-kpi-card">
+                                <span class="roi-lbl">Threat Score Reduction</span>
+                                <strong class="roi-val" id="roi-threat-drop">0.00</strong>
+                                <span class="roi-sub" id="roi-threat-pct">0% Decline</span>
+                            </div>
+                            <div class="roi-kpi-card">
+                                <span class="roi-lbl">Healthcare Savings</span>
+                                <strong class="roi-val" id="roi-health-savings">$0.0M</strong>
+                                <span class="roi-sub">Annual Civic Savings</span>
+                            </div>
+                            <div class="roi-kpi-card">
+                                <span class="roi-lbl">ICU Admissions Saved</span>
+                                <strong class="roi-val" id="roi-icu-avoided">0</strong>
+                                <span class="roi-sub">Patients Protected</span>
+                            </div>
+                            <div class="roi-kpi-card">
+                                <span class="roi-lbl">Daily Carbon Offset</span>
+                                <strong class="roi-val" id="roi-carbon-offset">0 Tons</strong>
+                                <span class="roi-sub">CO₂ Sequestered/day</span>
+                            </div>
+                        </div>
+
+                        <div class="policy-chart-wrap">
+                            <span class="card-eyebrow">PROJECTED 30-DAY AIR RECOVERY TRAJECTORY</span>
+                            <div style="height: 220px; width: 100%;">
+                                <canvas id="policyForecastChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================================================================
+             PAGE 5: YOLOv8 VISION AI LAB & LIVE STREAM
+             ==================================================================== -->
+        <div class="app-page" id="page-vision">
+            <div class="section-title-wrap">
+                <h2 class="section-heading">YOLOv8 Optical Vision Lab</h2>
+                <span class="section-subheading">Live webcam stream processing with on-canvas bounding boxes & photo upload detection</span>
+            </div>
+
+            <div class="vision-studio-grid">
+                <div class="surface-card upload-card">
+                    <div class="card-header-clean">
+                        <h3 class="ws-card-title">Camera Feed Mode</h3>
+                        <span class="badge-tag" id="webcam-fps-badge">0 FPS</span>
+                    </div>
+
+                    <div class="vision-mode-switch">
+                        <button class="mode-btn active" id="mode-btn-webcam">
+                            <i data-lucide="video" class="icon-xs"></i> Live Webcam
+                        </button>
+                        <button class="mode-btn" id="mode-btn-upload">
+                            <i data-lucide="upload" class="icon-xs"></i> File Upload
+                        </button>
+                    </div>
+
+                    <div id="webcam-controls-wrap">
+                        <div class="webcam-action-row">
+                            <button class="btn-solid" id="btn-start-webcam">
+                                <i data-lucide="camera" class="icon-xs"></i> Start Camera Stream
+                            </button>
+                            <button class="btn-outline" id="btn-stop-webcam" style="display: none;">
+                                <i data-lucide="square" class="icon-xs"></i> Stop Camera
+                            </button>
+                        </div>
+                        <span class="sim-hint" style="margin-top: 0.8rem; display: block;">
+                            Streams frames directly to YOLOv8n inference pipeline with real-time detection boxes.
+                        </span>
+                    </div>
+
+                    <div id="file-upload-controls-wrap" style="display: none;">
+                        <div class="dropzone-modern" id="dropzone-area">
+                            <i data-lucide="upload-cloud" class="icon-lg"></i>
+                            <span class="dropzone-title">Click to browse or drop an image</span>
+                            <span class="dropzone-hint">Analyzes bottles, cups, packaging, and plastic waste</span>
+                            <input type="file" id="vision-file-elem" accept="image/*" style="display: none;">
+                        </div>
+                        <button class="btn-solid" id="btn-browse-file">
+                            <i data-lucide="folder-plus" class="icon-xs"></i> Select Image File
+                        </button>
+                    </div>
+                </div>
+
+                <div class="surface-card preview-card">
+                    <div class="preview-header">
+                        <h3 class="ws-card-title">Detection Visualizer</h3>
+                        <span class="badge-tag" id="vision-stats-badge">YOLOv8 Output</span>
+                    </div>
+
+                    <div class="preview-canvas-wrap">
+                        <video id="webcam-video-elem" autoplay playsinline muted style="display: none;"></video>
+                        <canvas id="webcam-render-canvas" style="display: none; width: 100%; height: auto; border-radius: 12px;"></canvas>
+                        <img id="annotated-result-img" src="" alt="YOLOv8 Detection" style="display: none;">
+                        
+                        <div class="empty-placeholder" id="placeholder-box">
+                            <i data-lucide="camera-off" class="icon-lg"></i>
+                            <span>Click 'Start Camera Stream' or upload an image to begin inference</span>
+                        </div>
+                    </div>
+
+                    <div id="detection-details-table"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================================================================
+             PAGE 6: MUNICIPAL DISPATCH & CITIZEN REPORTING HUB
+             ==================================================================== -->
+        <div class="app-page" id="page-civic">
+            <div class="section-title-wrap">
+                <h2 class="section-heading">Municipal Dispatch & Citizen Reporting Hub</h2>
+                <span class="section-subheading">Civic compliance directives, emergency alert broadcaster, and community incident reporting portal</span>
+            </div>
+
+            <!-- Citizen Incident Reporting Portal Card -->
+            <div class="surface-card citizen-portal-card" style="margin-bottom: 2rem;">
+                <div class="card-header-clean">
+                    <div>
+                        <span class="card-eyebrow">COMMUNITY ECO-GUARDIAN PORTAL</span>
+                        <h3 class="ws-card-title">Report Environmental Incident (Earn Eco-Credits)</h3>
+                    </div>
+                    <span class="badge-tag"><i data-lucide="award" class="icon-xs"></i> +50 Eco-Credits Bounty</span>
+                </div>
+                
+                <form id="citizen-report-form" class="citizen-form-grid">
+                    <div class="form-group">
+                        <label for="citizen-hazard-type">Incident Classification:</label>
+                        <select id="citizen-hazard-type" class="form-select">
+                            <option value="waste_dumping">Illegal Plastic / Waste Dumping</option>
+                            <option value="water_effluent">Industrial River Effluent Discharge</option>
+                            <option value="open_burning">Open Biomass / Smog Burning</option>
+                            <option value="construction_dust">Unsuppressed Construction Dust</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="citizen-location-input">Location / Landmark:</label>
+                        <input type="text" id="citizen-location-input" class="form-input" placeholder="e.g. Yamuna River Outfall 4, Ring Road" required>
+                    </div>
+
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="citizen-notes-input">Incident Description & Evidence Notes:</label>
+                        <textarea id="citizen-notes-input" class="form-textarea" rows="3" placeholder="Describe the scale of contamination or dumping..."></textarea>
+                    </div>
+
+                    <div class="form-actions-row" style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="sim-hint">Submissions are automatically routed to municipal remediation dispatch squads.</span>
+                        <button type="submit" class="btn-solid" id="btn-submit-report" style="width: auto; padding: 0.75rem 2rem;">
+                            <i data-lucide="send" class="icon-xs"></i> Submit Incident Report
+                        </button>
+                    </div>
+                </form>
+
+                <div id="citizen-report-success-banner" class="report-success-banner" style="display: none;">
+                    <i data-lucide="check-circle" class="icon-md" style="color: #059669;"></i>
+                    <div>
+                        <strong>Incident Logged Successfully! Ticket #ECO-8942</strong>
+                        <p>Remediation fleet dispatched. 50 Eco-Credits awarded to your civic account.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Municipal Action Matrix -->
+            <div class="directives-header-bar surface-card" style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.6rem;">
+                <div>
+                    <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-pure);">Multi-Agency Incident Directives</h3>
+                    <p style="font-size: 0.8125rem; color: var(--text-secondary);">Actionable risk mitigation guidance calibrated to real-time composite threat levels.</p>
+                </div>
+                <button class="btn-solid" id="btn-download-directives-civic">
+                    <i data-lucide="file-text" class="icon-xs"></i> Download Compliance Briefing
+                </button>
+            </div>
+
+            <div class="directives-grid">
+                <div class="surface-card directive-column">
+                    <div class="directive-col-header">
+                        <i data-lucide="building-2" class="icon-md"></i>
+                        <h3>Municipal Operations</h3>
+                    </div>
+                    <ul class="clean-bullet-list" id="list-municipal"></ul>
+                </div>
+
+                <div class="surface-card directive-column">
+                    <div class="directive-col-header">
+                        <i data-lucide="activity" class="icon-md"></i>
+                        <h3>Public Health Authority</h3>
+                    </div>
+                    <ul class="clean-bullet-list" id="list-health"></ul>
+                </div>
+
+                <div class="surface-card directive-column">
+                    <div class="directive-col-header">
+                        <i data-lucide="users" class="icon-md"></i>
+                        <h3>Citizen Advisories</h3>
+                    </div>
+                    <ul class="clean-bullet-list" id="list-citizen"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================================================================
+             PAGE 7: LANGGRAPH ARCHITECTURE & NODE TRACE
+             ==================================================================== -->
+        <div class="app-page" id="page-architecture">
+            <div class="section-title-wrap">
+                <h2 class="section-heading">Multi-Agent System Architecture & LangGraph DAG</h2>
+                <span class="section-subheading">Pydantic v2 typed state bus, autonomous 6-node dependency graph, and real-time execution trace</span>
+            </div>
+
+            <!-- Agent Topology Cards Grid -->
+            <div class="arch-topology-grid" style="margin-bottom: 2rem;">
+                <div class="surface-card arch-card">
+                    <div class="arch-card-top">
+                        <div class="t-icon icon-air"><i data-lucide="wind" class="icon-sm"></i></div>
+                        <span class="badge-tag">Node 1</span>
+                    </div>
+                    <h3 class="arch-node-title">Atmospheric Air Specialist</h3>
+                    <p class="arch-node-desc">Queries live WAQI API & Open-Meteo telemetry. Calculates normalized EPA pollutant sub-indices (PM2.5, PM10, NO₂, SO₂, CO, O₃) and applies diurnal cyclical variations.</p>
+                    <div class="arch-meta-chips">
+                        <span class="t-pill">Input: <strong>WAQI / Open-Meteo</strong></span>
+                        <span class="t-pill">Output: <strong>AirSignal (Risk 0-4)</strong></span>
+                    </div>
+                </div>
+
+                <div class="surface-card arch-card">
+                    <div class="arch-card-top">
+                        <div class="t-icon icon-water"><i data-lucide="droplets" class="icon-sm"></i></div>
+                        <span class="badge-tag">Node 2</span>
+                    </div>
+                    <h3 class="arch-node-title">Hydrological Catchment Specialist</h3>
+                    <p class="arch-node-desc">Implements the Canadian CCME Water Quality Indexing formula across 6 chemical parameters (pH, Dissolved Oxygen, Turbidity, Conductivity, Nitrates, Phosphates).</p>
+                    <div class="arch-meta-chips">
+                        <span class="t-pill">Formula: <strong>CCME WQI Model</strong></span>
+                        <span class="t-pill">Output: <strong>WaterSignal (Risk 0-4)</strong></span>
+                    </div>
+                </div>
+
+                <div class="surface-card arch-card">
+                    <div class="arch-card-top">
+                        <div class="t-icon icon-waste"><i data-lucide="scan" class="icon-sm"></i></div>
+                        <span class="badge-tag">Node 3</span>
+                    </div>
+                    <h3 class="arch-node-title">Optical Computer Vision Specialist</h3>
+                    <p class="arch-node-desc">Executes YOLOv8n neural inference on live webcam streams and aerial imagery to classify debris density, littered plastics, bottles, and solid municipal waste.</p>
+                    <div class="arch-meta-chips">
+                        <span class="t-pill">Engine: <strong>YOLOv8 Neural Mesh</strong></span>
+                        <span class="t-pill">Output: <strong>WasteSignal (Risk 0-4)</strong></span>
+                    </div>
+                </div>
+
+                <div class="surface-card arch-card">
+                    <div class="arch-card-top">
+                        <div class="t-icon icon-health"><i data-lucide="heart-pulse" class="icon-sm"></i></div>
+                        <span class="badge-tag">Node 4</span>
+                    </div>
+                    <h3 class="arch-node-title">Epidemiological Health Specialist</h3>
+                    <p class="arch-node-desc">Evaluates acute respiratory and cardiopulmonary strain on vulnerable demographics. Projects pediatric/geriatric ICU admission surges and exposed population counts.</p>
+                    <div class="arch-meta-chips">
+                        <span class="t-pill">Model: <strong>Hospital Surge Risk %</strong></span>
+                        <span class="t-pill">Output: <strong>HealthSignal (Risk 0-4)</strong></span>
+                    </div>
+                </div>
+
+                <div class="surface-card arch-card">
+                    <div class="arch-card-top">
+                        <div class="t-icon icon-policy"><i data-lucide="building-2" class="icon-sm"></i></div>
+                        <span class="badge-tag">Node 5</span>
+                    </div>
+                    <h3 class="arch-node-title">Municipal Policy & Logistics Specialist</h3>
+                    <p class="arch-node-desc">Calculates statutory mitigation stages (STAGE-I to STAGE-IV), daily remediation budget expenditures ($M), and electric transit / waste sweeper fleet readiness.</p>
+                    <div class="arch-meta-chips">
+                        <span class="t-pill">Framework: <strong>Statutory Triggers</strong></span>
+                        <span class="t-pill">Output: <strong>PolicySignal (Risk 0-4)</strong></span>
+                    </div>
+                </div>
+
+                <div class="surface-card arch-card">
+                    <div class="arch-card-top">
+                        <div class="t-icon icon-air" style="background: linear-gradient(135deg, #1B4EF5, #7C3AED);"><i data-lucide="cpu" class="icon-sm"></i></div>
+                        <span class="badge-tag" style="background: rgba(124, 58, 237, 0.1); color: #7C3AED; border-color: rgba(124, 58, 237, 0.3);">Arbiter Node</span>
+                    </div>
+                    <h3 class="arch-node-title">Consensus Arbiter Coordinator</h3>
+                    <p class="arch-node-desc">Performs deterministic weighted consensus, detects inter-agent divergence, synthesizes the multi-agent debate transcript, and generates the executive summary.</p>
+                    <div class="arch-meta-chips">
+                        <span class="t-pill">Consensus: <strong>Deterministic Rebalancing</strong></span>
+                        <span class="t-pill">Output: <strong>EnviroVerdict Consensus</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LangGraph State Flow Pipeline Card -->
+            <div class="surface-card" style="padding: 1.75rem; margin-bottom: 2rem;">
+                <div class="card-header-clean">
+                    <div>
+                        <span class="card-eyebrow">STATEGRAPH PIPELINE FLOW</span>
+                        <h3 class="ws-card-title">LangGraph 6-Step Autonomous Sequential Execution</h3>
+                    </div>
+                    <span class="subtle-chip"><i data-lucide="git-branch" class="icon-xs"></i> Linear DAG with State Accumulator</span>
+                </div>
+
+                <div class="pipeline-flow-diagram">
+                    <div class="flow-step">
+                        <div class="flow-circle">1</div>
+                        <span class="flow-name">Air Agent</span>
+                        <span class="flow-type">WAQI Ingestion</span>
+                    </div>
+                    <div class="flow-connector"><i data-lucide="arrow-right" class="icon-xs"></i></div>
+                    <div class="flow-step">
+                        <div class="flow-circle">2</div>
+                        <span class="flow-name">Water Agent</span>
+                        <span class="flow-type">CCME WQI</span>
+                    </div>
+                    <div class="flow-connector"><i data-lucide="arrow-right" class="icon-xs"></i></div>
+                    <div class="flow-step">
+                        <div class="flow-circle">3</div>
+                        <span class="flow-name">Waste Vision</span>
+                        <span class="flow-type">YOLOv8 Optical</span>
+                    </div>
+                    <div class="flow-connector"><i data-lucide="arrow-right" class="icon-xs"></i></div>
+                    <div class="flow-step">
+                        <div class="flow-circle">4</div>
+                        <span class="flow-name">Health Agent</span>
+                        <span class="flow-type">Surge Projections</span>
+                    </div>
+                    <div class="flow-connector"><i data-lucide="arrow-right" class="icon-xs"></i></div>
+                    <div class="flow-step">
+                        <div class="flow-circle">5</div>
+                        <span class="flow-name">Policy Agent</span>
+                        <span class="flow-type">Municipal Logistics</span>
+                    </div>
+                    <div class="flow-connector"><i data-lucide="arrow-right" class="icon-xs"></i></div>
+                    <div class="flow-step flow-step-arbiter">
+                        <div class="flow-circle" style="background: linear-gradient(135deg, #1B4EF5, #7C3AED);">6</div>
+                        <span class="flow-name">Coordinator</span>
+                        <span class="flow-type">Consensus Core</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution Trace Log -->
+            <div class="surface-card trace-card" style="padding: 1.75rem;">
+                <div class="card-header-clean">
+                    <div>
+                        <span class="card-eyebrow">REAL-TIME EXECUTION TELEMETRY</span>
+                        <h3 class="ws-card-title">Live LangGraph State Machine Trace</h3>
+                    </div>
+                    <span class="status-chip">ALL NODES SYNCHRONIZED</span>
+                </div>
+                <div class="trace-timeline-wrap" id="trace-logs-wrap"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Multi-Channel Emergency Alert Modal -->
+    <div class="modal-backdrop" id="alert-modal-backdrop" style="display: none;">
+        <div class="modal-card surface-card">
+            <div class="modal-header">
+                <div class="modal-title-line">
+                    <div class="modal-title-icon">
+                        <i data-lucide="radio" class="icon-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="modal-headline">Emergency Multi-Channel Alert Dispatch</h3>
+                        <p class="modal-subtitle">Official public safety and municipal compliance broadcast</p>
+                    </div>
+                </div>
+                <button class="modal-close-btn" id="btn-close-alert-modal" title="Close Alert Modal">&times;</button>
+            </div>
+            
+            <div class="alert-tabs-row">
+                <button class="alert-tab-btn active" data-atab="whatsapp">
+                    <i data-lucide="message-square" class="icon-xs"></i> WhatsApp / SMS
+                </button>
+                <button class="alert-tab-btn" data-atab="social">
+                    <i data-lucide="share-2" class="icon-xs"></i> Public Advisory
+                </button>
+                <button class="alert-tab-btn" data-atab="memo">
+                    <i data-lucide="file-text" class="icon-xs"></i> Official Memo
+                </button>
+            </div>
+
+            <div class="alert-tab-body active" id="atab-whatsapp">
+                <div class="alert-textarea-wrap">
+                    <textarea class="alert-textarea" id="txt-alert-whatsapp" readonly spellcheck="false"></textarea>
+                </div>
+                <div class="alert-action-footer">
+                    <span class="alert-target-hint">Encrypted SMS & Civic WhatsApp Gateway</span>
+                    <button class="btn-solid btn-copy-alert" data-target="txt-alert-whatsapp">
+                        <i data-lucide="copy" class="icon-xs"></i> Copy Broadcast
+                    </button>
+                </div>
+            </div>
+
+            <div class="alert-tab-body" id="atab-social">
+                <div class="alert-textarea-wrap">
+                    <textarea class="alert-textarea" id="txt-alert-social" readonly spellcheck="false"></textarea>
+                </div>
+                <div class="alert-action-footer">
+                    <span class="alert-target-hint">Public Safety X / Civic Channels</span>
+                    <button class="btn-solid btn-copy-alert" data-target="txt-alert-social">
+                        <i data-lucide="copy" class="icon-xs"></i> Copy Advisory
+                    </button>
+                </div>
+            </div>
+
+            <div class="alert-tab-body" id="atab-memo">
+                <div class="alert-textarea-wrap">
+                    <textarea class="alert-textarea" id="txt-alert-memo" readonly spellcheck="false"></textarea>
+                </div>
+                <div class="alert-action-footer">
+                    <span class="alert-target-hint">Municipal Emergency Operations Center (EOC)</span>
+                    <button class="btn-solid btn-copy-alert" data-target="txt-alert-memo">
+                        <i data-lucide="printer" class="icon-xs"></i> Copy Memorandum
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pro-Level Sleek Enterprise Footer -->
+    <footer class="app-footer-pro">
+        <div class="footer-pro-inner">
+            <div class="footer-left">
+                <div class="footer-brand-pill">
+                    <i data-lucide="shield-check" class="icon-xs"></i>
+                    <span class="footer-brand-name">EcoMesh™</span>
+                    <span class="footer-version">v2.5</span>
+                </div>
+                <span class="footer-sep">•</span>
+                <span class="footer-copy">© 2026 EcoMesh Intelligence Systems. All rights reserved.</span>
+            </div>
+
+            <div class="footer-right">
+                <div class="footer-status-badge">
+                    <span class="pulse-dot-green"></span>
+                    <span>5 Specialists Online</span>
+                </div>
+                <span class="footer-sep">•</span>
+                <span class="footer-tech-tag">LangGraph DAG</span>
+                <span class="footer-sep">•</span>
+                <span class="footer-tech-tag">YOLOv8 Vision</span>
+                <span class="footer-sep">•</span>
+                <span class="footer-tech-tag">WAQI & Meteo</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
